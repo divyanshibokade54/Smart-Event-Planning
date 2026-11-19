@@ -37,6 +37,26 @@ python -m database.reset_db --seed
 
 A backup is stored under `backups/` before schema changes. The backup folder is ignored by Git.
 
+## Phase 1B: CRUD layer and seed data
+
+The CRUD layer is implemented in the `crud/` package. It keeps database operations separate from the user interface and uses SQLAlchemy 2.0 `select()` statements.
+
+Available CRUD modules:
+
+- `crud/camps.py` — locations and medical camps
+- `crud/patients.py` — patients and camp registrations
+- `crud/doctors.py` — specializations, doctors, availability, and allocations
+- `crud/resources.py` — resources, resource allocations, staff, and staff allocations
+- `crud/emergency.py` — emergency alerts and notifications
+- `crud/queue.py` — basic digital queue tokens
+- `crud/care.py` — consultations, beds, and admissions
+
+CRUD operations validate business rules such as camp capacity, duplicate registrations, available resource quantity, and occupied beds. Database constraint errors are rolled back and returned as readable `ValueError` messages.
+
+`database/seed_data.py` creates repeatable demonstration data: 3 locations, 4 camps, 8 doctors, 40 patients, 60 registrations, tokens, consultations, beds, admissions, resources, staff, alerts, notifications, and users. Running the seed script again does not duplicate records.
+
+CRUD tests are located in `tests/test_crud.py` and use an isolated in-memory SQLite database. The current test suite contains 6 passing tests.
+
 ## Phase 1C: Streamlit database connection
 
 The Streamlit frontend now reads live data through the CRUD layer.
