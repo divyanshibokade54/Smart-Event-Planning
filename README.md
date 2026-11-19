@@ -36,3 +36,63 @@ python -m database.reset_db --seed
 ```
 
 A backup is stored under `backups/` before schema changes. The backup folder is ignored by Git.
+
+## Phase 1C: Streamlit database connection
+
+The Streamlit frontend now reads live data through the CRUD layer.
+
+The home page displays:
+
+- Total camps
+- Patients registered
+- OPD registrations
+- IPD registrations
+- Active doctors
+- Resources below reorder level
+- Open emergency alerts
+
+Available Streamlit pages:
+
+- `pages/1_Camps.py` — create, view, edit, and delete locations and camps
+- `pages/2_Patient_Registration.py` — register OPD/IPD patients and manage registrations
+- `pages/3_Doctors.py` — manage specializations, doctors, availability, and camp allocations
+- `pages/4_Resources.py` — manage inventory, allocations, and low-stock resources
+
+The shared helper in `utils/db_session.py` caches the SQLAlchemy engine with `st.cache_resource` and creates a fresh session for each page run. Streamlit pages do not contain raw SQL or ORM queries.
+
+## Run the Streamlit application
+
+After confirming that the local database contains only seed data, recreate and seed the current schema:
+
+```powershell
+.\venv\Scripts\Activate.ps1
+python -m database.reset_db --seed
+```
+
+When prompted, type `RESET`. Then start Streamlit:
+
+```powershell
+python -m streamlit run app.py
+```
+
+Open `http://localhost:8501` in a browser.
+
+Expected seeded dashboard values:
+
+```text
+Total Camps: 4
+Patients Registered: 60
+OPD: 50
+IPD: 10
+Doctors: 8
+Low Stock: 2
+Open Alerts: 1
+```
+
+## Manual Streamlit verification
+
+1. Create, edit, and delete a camp from the Camps page.
+2. Register both an outpatient and an inpatient and confirm the registration ID.
+3. Add a specialization, doctor, availability record, and camp allocation.
+4. Add a resource, verify low-stock highlighting, and allocate it to a camp.
+5. Return to the home page and verify that the dashboard values reflect the database changes.
