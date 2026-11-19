@@ -22,3 +22,17 @@ python -m database.seed_data
 ```
 
 This creates the local SQLite database file `medical_camp.db` and inserts sample medical-camp data. The backend and Streamlit frontend can be added after the database design is approved by your mentor.
+
+## Phase 1A database schema
+
+The SQLAlchemy model now defines 19 tables covering users, camps, patients, OPD/IPD registration, digital tokens, doctors, care, beds, resources, staff, and emergency alerts.
+
+`python -m database.init_db` creates missing tables and prints the table list. It does not alter columns in an existing SQLite table. Because the existing local database contains the earlier six-table schema, it must be reset after confirming that the data is seed data only.
+
+The reset command asks for the exact confirmation word `RESET`:
+
+```cmd
+python -m database.reset_db --seed
+```
+
+A backup is stored under `backups/` before schema changes. The backup folder is ignored by Git.
